@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Try On Dress</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #e9eeff;}
+        .container { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 8px; padding: 30px;}
+        .flexrow { display: flex; gap: 30px; align-items: flex-start;}
+        .product-img { width: 140px; height: 170px; object-fit: contain;}
+        .result-img { width: 270px; margin-top:18px; border-radius:7px;}
+        .user-img { width:110px; height:145px; object-fit:cover; border-radius:7px;}
+        .caption { text-align:center; font-size:15px;}
+        .error { color: darkred; font-weight: bold; margin: 12px 0;}
+        input[type="file"] { margin-bottom:14px;}
+        .btn { background:#4e74d1; color:white; padding:6px 15px; border:none; border-radius:6px;}
+        .btn:hover { background:#1e2d60;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="{{ url_for('index') }}">&larr; Back</a>
+    <h2>Try On: <span style="font-weight:400;">{{ filename }}</span></h2>
+    <div class="flexrow">
+        <div>
+            <img class="product-img" src="{{ dress_url }}" alt="Dress">
+            <div class="caption">Selected Item</div>
+        </div>
+        <div>
+            <form method="POST" enctype="multipart/form-data">
+                <label>Upload your photo:</label><br>
+                <input type="file" name="user_image" accept="image/*" required>
+                <br>
+                <button type="submit" class="btn">Try On</button>
+            </form>
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+            {% if user_img_url %}
+                <div style="margin-top:8px;"><img class="user-img" src="{{ user_img_url }}"></div>
+                <div class="caption">Your Photo</div>
+            {% endif %}
+        </div>
+        {% if result_img_url %}
+        <div>
+            <img class="result-img" src="{{ result_img_url }}" alt="Result">
+            <div class="caption">Result</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

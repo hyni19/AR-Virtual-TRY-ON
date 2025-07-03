@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Try-On E-Commerce</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card { min-width: 180px; max-width: 220px; margin: 15px auto; height: 340px; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-img-wrapper { width: 100%; aspect-ratio: 4/5; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border-radius: 8px 8px 0 0; overflow: hidden; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .card-title { font-size: 1.1rem; font-weight: 500; }
+        .cart-sidebar { position: fixed; top: 0; right: 0; width: 300px; height: 100vh; background: #fff; border-left: 1px solid #eee; box-shadow: -2px 0 8px #0001; z-index: 1050; padding: 24px 18px; overflow-y: auto; }
+        .cart-sidebar h5 { margin-bottom: 18px; }
+        .cart-item-img { width: 48px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 10px; }
+        .cart-item { display: flex; align-items: center; margin-bottom: 12px; }
+        .cart-item-title { flex: 1; }
+        .cart-remove { color: #dc3545; cursor: pointer; font-size: 1.2em; margin-left: 8px; }
+        .tab-content { margin-top: 24px; }
+        .tryon-btn { margin-left: 8px; }
+        @media (max-width: 991px) {
+            .cart-sidebar { position: static; width: 100%; height: auto; border-left: none; box-shadow: none; padding: 12px 0; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+      <button class="btn btn-warning me-3" id="tryonRoomBtn" onclick="window.open('/tryon-room', '_blank');">
+        Virtual Try-On Room
+      </button>
+      <a class="navbar-brand" href="#">Virtual Try-On</a>
+      ...
+    </div>
+  </nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-9">
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="shirts-tab" data-bs-toggle="tab" data-bs-target="#shirts" type="button" role="tab">Shirts</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="pants-tab" data-bs-toggle="tab" data-bs-target="#pants" type="button" role="tab">Pants</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="sarees-tab" data-bs-toggle="tab" data-bs-target="#sarees" type="button" role="tab">Sarees</button>
+        </li>
+      </ul>
+      <div class="tab-content" id="productTabsContent">
+        <div class="tab-pane fade show active" id="shirts" role="tabpanel">
+          <div class="row">
+            {% for s in shirts %}
+            <div class="col-md-4 col-lg-3">
+              <div class="card product-card">
+                <div class="product-img-wrapper">
+                  <img src="{{ url_for('static', filename='images/shirts/' + s) }}" class="product-img" alt="Shirt">
+                </div>
+                <div class="card-body text-center">
+                  <div class="card-title">Shirt {{ loop.index }}</div>
+                  <input type="color" class="form-control form-control-color my-2" value="#ffffff" onchange="updateColor('shirt','{{ s }}',this.value)">
+                  <button class="btn btn-outline-primary btn-sm" onclick="addToCart('shirt','{{ s }}')">Add to Cart</button>
+                  <button class="btn btn-success btn-sm tryon-btn" onclick="tryOn('shirt','{{ s }}')">Try On</button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="tab-pane fade" id="pants" role="tabpanel">
+          <div class="row">
+            {% for p in pants %}
+            <div class="col-md-4 col-lg-3">
+              <div class="card product-card">
+                <div class="product-img-wrapper">
+                  <img src="{{ url_for('static', filename='images/pants/' + p) }}" class="product-img" alt="Pant">
+                </div>
+                <div class="card-body text-center">
+                  <div class="card-title">Pant {{ loop.index }}</div>
+                  <input type="color" class="form-control form-control-color my-2" value="#ffffff" onchange="updateColor('pant','{{ p }}',this.value)">
+                  <button class="btn btn-outline-primary btn-sm" onclick="addToCart('pant','{{ p }}')">Add to Cart</button>
+                  <button class="btn btn-success btn-sm tryon-btn" onclick="tryOn('pant','{{ p }}')">Try On</button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="tab-pane fade" id="sarees" role="tabpanel">
+          <div class="row">
+            {% for s in sarees %}
+            <div class="col-md-4 col-lg-3">
+              <div class="card product-card">
+                <div class="product-img-wrapper">
+                  <img src="{{ url_for('static', filename='images/saree/' + s) }}" class="product-img" alt="Saree">
+                </div>
+                <div class="card-body text-center">
+                  <div class="card-title">Saree {{ loop.index }}</div>
+                  <input type="color" class="form-control form-control-color my-2" value="#ffffff" onchange="updateColor('saree','{{ s }}',this.value)">
+                  <button class="btn btn-outline-primary btn-sm" onclick="addToCart('saree','{{ s }}')">Add to Cart</button>
+                  <button class="btn btn-success btn-sm tryon-btn" onclick="tryOn('saree','{{ s }}')">Try On</button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="cart-sidebar" id="cartSidebar">
+        <h5>🛒 Cart (<span id="cartCountSidebar">0</span>)</h5>
+        <div id="cartItems"></div>
+      </div>
+    </div>
+  </div>
+  <form method="POST" action="/start-tryon" id="tryon_form" target="_blank" style="display:none;">
+    <input type="hidden" name="shirt" id="shirt_input">
+    <input type="hidden" name="pant" id="pant_input">
+    <input type="hidden" name="saree" id="saree_input">
+    <input type="hidden" name="shirt_color" id="shirt_color_input" value="#ffffff">
+    <input type="hidden" name="pant_color" id="pant_color_input" value="#ffffff">
+    <input type="hidden" name="saree_color" id="saree_color_input" value="#ffffff">
+  </form>
+</div>
+<script>
+  let cart = [];
+  let colors = { shirt: {}, pant: {}, saree: {} };
+  function addToCart(type, fname) {
+    if (!cart.find(item => item.type === type && item.fname === fname)) {
+      cart.push({ type, fname });
+      updateCart();
+    }
+  }
+  function removeFromCart(type, fname) {
+    cart = cart.filter(item => !(item.type === type && item.fname === fname));
+    updateCart();
+  }
+  function updateCart() {
+    let cartItems = document.getElementById('cartItems');
+    cartItems.innerHTML = '';
+    cart.forEach(item => {
+      let imgSrc = `static/images/${item.type === 'saree' ? 'saree' : item.type + 's'}/${item.fname}`;
+      let color = colors[item.type][item.fname] || '#ffffff';
+      cartItems.innerHTML += `<div class='cart-item'><img src='${imgSrc}' class='cart-item-img'><span class='cart-item-title'>${capitalize(item.type)}: ${item.fname}</span><span style='background:${color};width:18px;height:18px;display:inline-block;border-radius:50%;border:1px solid #ccc;margin-left:8px;'></span><span class='cart-remove' onclick="removeFromCart('${item.type}','${item.fname}')">&times;</span></div>`;
+    });
+    document.getElementById('cartCount').innerText = cart.length;
+    document.getElementById('cartCountSidebar').innerText = cart.length;
+  }
+  function updateColor(type, fname, color) {
+    colors[type][fname] = color;
+    updateCart();
+  }
+  function tryOn(type, fname) {
+    // Set only the selected item for try-on, clear others
+    document.getElementById('shirt_input').value = (type === 'shirt') ? fname : '';
+    document.getElementById('pant_input').value = (type === 'pant') ? fname : '';
+    document.getElementById('saree_input').value = (type === 'saree') ? fname : '';
+    document.getElementById('shirt_color_input').value = (type === 'shirt') ? (colors.shirt[fname] || '#ffffff') : '#ffffff';
+    document.getElementById('pant_color_input').value = (type === 'pant') ? (colors.pant[fname] || '#ffffff') : '#ffffff';
+    document.getElementById('saree_color_input').value = (type === 'saree') ? (colors.saree[fname] || '#ffffff') : '#ffffff';
+    document.getElementById('tryon_form').submit();
+  }
+  function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+  function toggleCart() {
+    let sidebar = document.getElementById('cartSidebar');
+    sidebar.style.display = (sidebar.style.display === 'none' || sidebar.style.display === '') ? 'block' : 'none';
+  }
+  window.onload = updateCart;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
